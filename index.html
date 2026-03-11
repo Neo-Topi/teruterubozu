@@ -1,28 +1,503 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<title>TERU TERU BOZU</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TERU TERU BOZU | Market News Portal</title>
+  <style>
+    :root {
+      --bg: #f3f5f7;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #dbe1e8;
+      --nav: #0f172a;
+      --accent: #1d4ed8;
+      --accent-2: #0ea5e9;
+      --danger: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Meiryo, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .topbar {
+      background: var(--nav);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    .market-strip {
+      background: #111827;
+      color: #fff;
+      padding: 8px 20px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .ticker {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
+      min-height: 60px;
+    }
+
+    .ticker-name {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+
+    .ticker-price {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .ticker-move.up { color: #22c55e; }
+    .ticker-move.down { color: #f87171; }
+    .ticker-move {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 18px auto;
+      padding: 0 16px 30px;
+    }
+
+    .headline-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .hero, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .hero-image {
+      height: 320px;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #0ea5e9);
+      position: relative;
+      color: #fff;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .hero-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      font-size: 34px;
+      line-height: 1.2;
+      margin: 0 0 12px;
+      max-width: 760px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: #dbeafe;
+    }
+
+    .hero-links {
+      padding: 16px 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero-link {
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .hero-link:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 0 10px;
+      gap: 12px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .section-sub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1.4fr 1fr;
+      gap: 16px;
+    }
+
+    .card-header {
+      padding: 16px 18px 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .list {
+      padding: 10px 18px 18px;
+    }
+
+    .list-item {
+      display: block;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .list-item:last-child { border-bottom: none; }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-size: 16px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .summary {
+      color: #475569;
+      font-size: 13px;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .widget {
+      padding: 14px 18px 18px;
+    }
+
+    .watch-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      padding: 12px 0;
+      gap: 12px;
+    }
+
+    .watch-item:last-child { border-bottom: none; }
+
+    .watch-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .watch-right {
+      text-align: right;
+    }
+
+    .watch-name {
+      font-weight: 700;
+    }
+
+    .watch-code {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .watch-price {
+      font-weight: 800;
+    }
+
+    .chart-box {
+      padding: 18px;
+    }
+
+    .chart-placeholder {
+      height: 290px;
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(37,99,235,0.12), rgba(37,99,235,0.03)),
+        repeating-linear-gradient(
+          to right,
+          transparent 0,
+          transparent 79px,
+          rgba(148,163,184,0.18) 80px
+        ),
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 57px,
+          rgba(148,163,184,0.18) 58px
+        ),
+        #f8fafc;
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-line {
+      position: absolute;
+      inset: 0;
+    }
+
+    .chart-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .market-strip,
+      .headline-grid,
+      .news-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 28px; }
+    }
+  </style>
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand">TERU TERU BOZU</div>
+      <div class="tagline">Market News Portal / Money Never Sleeps</div>
+    </div>
+    <div class="tagline">株・為替・暗号資産・国際ニュース</div>
+  </header>
 
-<h1>TERU TERU BOZU</h1>
-<p>Money Never Sleeps</p>
+  <section class="market-strip">
+    <div class="ticker">
+      <div class="ticker-name">日経225</div>
+      <div class="ticker-price">39,842.15</div>
+      <div class="ticker-move up">+218.42 (+0.55%)</div>
+    </div>
+    <div class="ticker">
+      <div class="ticker-name">NASDAQ</div>
+      <div class="ticker-price">18,404.77</div>
+      <div class="ticker-move down">-64.18 (-0.35%)</div>
+    </div>
+    <div class="ticker">
+      <div class="ticker-name">BTC/USD</div>
+      <div class="ticker-price">82,640</div>
+      <div class="ticker-move up">+1,120 (+1.37%)</div>
+    </div>
+    <div class="ticker">
+      <div class="ticker-name">USD/JPY</div>
+      <div class="ticker-price">148.72</div>
+      <div class="ticker-move down">-0.44 (-0.29%)</div>
+    </div>
+  </section>
 
-<h2>Markets</h2>
-<ul>
-<li>Nikkei 225</li>
-<li>NASDAQ</li>
-<li>Bitcoin</li>
-<li>USDJPY</li>
-</ul>
+  <main class="container">
+    <div class="headline-grid">
+      <article class="hero">
+        <div class="hero-image">
+          <div class="hero-badge">TOP STORY</div>
+          <h1>東京市場・米株・暗号資産を横断して一目で追える、個人向けマーケットニュース画面</h1>
+          <p>TERU TERU BOZU は、株価・為替・ビットコイン・国際ニュースをシンプルにまとめて確認するための個人ニュースポータルです。</p>
+        </div>
+        <div class="hero-links">
+          <a class="hero-link" href="#">日経平均、米金利、ドル円の連動を朝にまとめて確認する</a>
+          <a class="hero-link" href="#">ビットコインとNASDAQの強弱をざっくり俯瞰する</a>
+          <a class="hero-link" href="#">SNS話題・国際ニュース・相場材料を1ページで整理する</a>
+        </div>
+      </article>
 
-<h2>News</h2>
-<ul>
-<li>株ニュース</li>
-<li>国際ニュース</li>
-<li>SNS話題</li>
-</ul>
+      <aside class="card">
+        <div class="card-header">注目ウォッチ</div>
+        <div class="widget">
+          <div class="watch-item">
+            <div class="watch-left">
+              <div class="watch-name">エヌビディア</div>
+              <div class="watch-code">NASDAQ: NVDA</div>
+            </div>
+            <div class="watch-right">
+              <div class="watch-price">114.32</div>
+              <div class="ticker-move up">+1.22%</div>
+            </div>
+          </div>
+          <div class="watch-item">
+            <div class="watch-left">
+              <div class="watch-name">S&P500</div>
+              <div class="watch-code">INDEX: SPX</div>
+            </div>
+            <div class="watch-right">
+              <div class="watch-price">5,218.44</div>
+              <div class="ticker-move down">-0.18%</div>
+            </div>
+          </div>
+          <div class="watch-item">
+            <div class="watch-left">
+              <div class="watch-name">ゴールド</div>
+              <div class="watch-code">XAU/USD</div>
+            </div>
+            <div class="watch-right">
+              <div class="watch-price">2,182.50</div>
+              <div class="ticker-move up">+0.42%</div>
+            </div>
+          </div>
+          <div class="watch-item">
+            <div class="watch-left">
+              <div class="watch-name">原油</div>
+              <div class="watch-code">WTI</div>
+            </div>
+            <div class="watch-right">
+              <div class="watch-price">77.84</div>
+              <div class="ticker-move down">-0.63%</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
 
+    <div class="section-title">
+      <h2>マーケット概況</h2>
+      <div class="section-sub">ここは後で TradingView の実チャートに差し替えできます</div>
+    </div>
+    <section class="card chart-box">
+      <div class="chart-placeholder">
+        <svg class="chart-line" viewBox="0 0 1000 300" preserveAspectRatio="none">
+          <polyline fill="none" stroke="#2563eb" stroke-width="4"
+            points="0,220 70,210 120,215 180,180 250,170 320,190 380,145 450,132 520,150 610,110 700,125 790,88 860,92 930,70 1000,52" />
+          <polyline fill="rgba(37,99,235,0.14)" stroke="none"
+            points="0,220 70,210 120,215 180,180 250,170 320,190 380,145 450,132 520,150 610,110 700,125 790,88 860,92 930,70 1000,52 1000,300 0,300" />
+        </svg>
+      </div>
+      <div class="chart-note">仮の表示です。次に TradingView の埋め込みへ置き換えると、日経・BTC・ドル円をリアルタイム表示できます。</div>
+    </section>
+
+    <div class="section-title">
+      <h2>ニュース一覧</h2>
+      <div class="section-sub">見出しダミー。あとでRSSに置き換え可能</div>
+    </div>
+
+    <section class="news-grid">
+      <article class="card">
+        <div class="card-header">株ニュース</div>
+        <div class="list">
+          <a class="list-item" href="#">
+            <div class="meta">日本株 / 市況</div>
+            <div class="title">日経平均は続伸、半導体関連が相場をけん引</div>
+            <div class="summary">主力株の買いが先行し、指数は寄り付き後もしっかりした値動き。</div>
+          </a>
+          <a class="list-item" href="#">
+            <div class="meta">米国株 / 決算</div>
+            <div class="title">米大型ハイテクの決算控え、NASDAQ先物は神経質な動き</div>
+            <div class="summary">金利見通しとAI関連銘柄への期待が交錯し、方向感は限定的。</div>
+          </a>
+          <a class="list-item" href="#">
+            <div class="meta">個別材料</div>
+            <div class="title">防衛・電線・電力関連に資金が向かう展開</div>
+            <div class="summary">テーマ株物色が継続し、短期資金の回転が目立つ。</div>
+          </a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">国際ニュース</div>
+        <div class="list">
+          <a class="list-item" href="#">
+            <div class="meta">米国 / 金融政策</div>
+            <div class="title">FRB高官発言を受けてドル買いが優勢に</div>
+            <div class="summary">早期利下げ観測が後退し、為替市場ではドルの底堅さが意識される。</div>
+          </a>
+          <a class="list-item" href="#">
+            <div class="meta">地政学</div>
+            <div class="title">中東情勢への警戒続く、原油相場は高止まり</div>
+            <div class="summary">供給懸念がくすぶるなか、リスク資産全体にも影響が波及。</div>
+          </a>
+          <a class="list-item" href="#">
+            <div class="meta">欧州</div>
+            <div class="title">欧州株はまちまち、景気指標と企業業績を見極め</div>
+            <div class="summary">金融・資本財はしっかり、一方で消費関連は伸び悩み。</div>
+          </a>
+        </div>
+      </article>
+
+      <aside class="card">
+        <div class="card-header">SNS話題</div>
+        <div class="list">
+          <a class="list-item" href="#">
+            <div class="meta">Xトレンド</div>
+            <div class="title">日経・BTC・ドル円の同時監視が個人投資家の定番に</div>
+          </a>
+          <a class="list-item" href="#">
+            <div class="meta">マーケット雑談</div>
+            <div class="title">米株オープン前に何をチェックするかが話題</div>
+          </a>
+          <a class="list-item" href="#">
+            <div class="meta">注目ワード</div>
+            <div class="title">半導体、円安、ビットコイン、原油</div>
+          </a>
+          <a class="list-item" href="#">
+            <div class="meta">メモ</div>
+            <div class="title">ここは後でRSSやSNS埋め込みに差し替え可能</div>
+          </a>
+        </div>
+      </aside>
+    </section>
+
+    <div class="footer">TERU TERU BOZU / Sample layout for market news portal</div>
+  </main>
 </body>
 </html>
