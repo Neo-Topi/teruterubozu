@@ -1,2 +1,3 @@
-# -neotopi
-NeoTopi ニュースポータル
+# TERU TERU BOZU
+
+Market News Portal
